@@ -9,6 +9,11 @@ param tags object = {}
 param vnetAddressPrefix string = '10.40.0.0/16'
 param privateEndpointSubnetPrefix string = '10.40.0.0/24'
 param applicationSubnetPrefix string = '10.40.1.0/24'
+@description('Application subnet delegation, such as Microsoft.App/environments; configure for the chosen container platform.')
+param applicationSubnetDelegation string = ''
+param applicationSubnetNetworkSecurityGroupId string = ''
+param applicationSubnetRouteTableId string = ''
+param applicationSubnetNatGatewayId string = ''
 @description('Object ID of an existing application service principal or managed identity; leave empty to skip role assignments.')
 param applicationPrincipalId string = ''
 @description('Model name; leave empty to skip model deployment.')
@@ -49,6 +54,10 @@ module network 'br/public:avm/res/network/virtual-network:0.6.1' = {
       {
         name: 'application'
         addressPrefix: applicationSubnetPrefix
+        delegation: empty(applicationSubnetDelegation) ? null : applicationSubnetDelegation
+        networkSecurityGroupResourceId: empty(applicationSubnetNetworkSecurityGroupId) ? null : applicationSubnetNetworkSecurityGroupId
+        routeTableResourceId: empty(applicationSubnetRouteTableId) ? null : applicationSubnetRouteTableId
+        natGatewayResourceId: empty(applicationSubnetNatGatewayId) ? null : applicationSubnetNatGatewayId
       }
     ]
   }

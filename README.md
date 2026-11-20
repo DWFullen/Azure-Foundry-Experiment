@@ -33,7 +33,10 @@ available for application instrumentation; no application is deployed here.
   subdomains and storage names must still be globally unique.
 - Choose non-overlapping VNet and subnet CIDRs if the defaults conflict with
   on-premises or other Azure networks. The application subnet is reserved, not
-  delegated; configure it for the chosen container platform before deployment.
+  delegated by default. Configure its delegation, NSG, route table, and NAT
+  gateway through the Bicep parameters for the chosen container platform.
+  Do not configure these out of band: subsequent deployments reconcile the
+  subnet to the parameter values and may remove out-of-band changes.
 
 ## Deploy locally
 
@@ -51,8 +54,10 @@ Edit `infra/main.bicepparam` for your environment. The optional
 `applicationPrincipalId` is the **object ID** of an existing managed identity
 or service principal, not its client ID. It receives Cognitive Services OpenAI
 User and Storage Blob Data Contributor at the respective resource scopes; omit
-it to manage roles separately. Grant human project users appropriate Foundry
-roles separately. Role propagation can take time.
+it to manage roles separately. The OpenAI role covers inference, not general
+Foundry project operations. Grant the application identity an appropriate
+Foundry project role separately if it uses project APIs; grant human project
+users appropriate roles separately as well. Role propagation can take time.
 
 No model is deployed by default: model availability, versions, deployment SKUs,
 and quota vary by subscription and region. To deploy one, set `modelName`,
